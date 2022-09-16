@@ -1,12 +1,21 @@
 package me.hydos.crabday;
 
 import me.hydos.crabday.window.Window;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.objdetect.CascadeClassifier;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws AWTException, IOException {
@@ -14,8 +23,15 @@ public class Main {
         var window = Window.getWindowInfo("Hayday1");
         window.moveToFront();
 
-        BufferedImage createScreenCapture = robot.createScreenCapture(new Rectangle(window.getLeft(), window.getTop(), window.getWidth(), window.getHeight()));
-        ImageIO.write(createScreenCapture, "png", new File("C:\\Users\\hayde\\Desktop\\Maldium\\positive\\" + System.currentTimeMillis() / 1000 + ".png"));
+        System.load("C:/opencv/build/java/x64/opencv_java460.dll");
+        var screenCapture = robot.createScreenCapture(new Rectangle(window.getLeft(), window.getTop(), window.getWidth(), window.getHeight()));
+        var src = load(screenCapture);
+        var pDetections = new MatOfRect();
+        var classifier = new CascadeClassifier("E:/Projects/hYdos/CrabDay/training/Wheat/training/cascade.xml");
+        classifier.detectMultiScale(src, pDetections);
+        var detections = pDetections.toList();
+        SwingUtilities.invokeLater(() -> ImageLocator.debug(screenCapture, detections));
+        System.out.println("e");
 
         //var subImage = ImageIO.read(Objects.requireNonNull(Main.class.getResourceAsStream("/wheat.png"), "Couldn't find Wheat Image"));
 /*        var locations = ImageLocator.findImageLocation(createScreenCapture, subImage, 88);
@@ -55,5 +71,11 @@ public class Main {
             robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             SwingUtilities.invokeLater(() -> ImageLocator.debug(createScreenCapture, subImage, locations));
         }*/
+    }
+
+    public static Mat load(BufferedImage image) throws IOException {
+        Path path = Paths.get("pain.png");
+        ImageIO.write(image, "png", new FileImageOutputStream(path.toFile()));
+        return Imgcodecs.imread(path.toAbsolutePath().toString());
     }
 }

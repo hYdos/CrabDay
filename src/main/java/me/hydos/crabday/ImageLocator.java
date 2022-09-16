@@ -1,5 +1,7 @@
 package me.hydos.crabday;
 
+import org.opencv.core.Rect;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,16 +11,16 @@ import java.util.function.IntBinaryOperator;
 
 public class ImageLocator {
 
-    public static void debug(BufferedImage mainImage, BufferedImage subImage, List<Point> location) {
+    public static void debug(BufferedImage mainImage, List<Rect> location) {
         var f = new JFrame();
         f.getContentPane().add(new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 g.drawImage(mainImage, 0, 0, null);
-                for (Point point : location) {
+                for (Rect point : location) {
                     g.setColor(Color.RED);
-                    g.drawRect(point.x, point.y, subImage.getWidth(), subImage.getHeight());
+                    g.drawRect(point.x, point.y, point.width, point.height);
                 }
             }
         });

@@ -12,5 +12,6 @@ repositories {
 dependencies {
     implementation("net.java.dev.jna:jna:5.12.1")
     implementation("net.java.dev.jna:jna-platform:5.12.1")
-    implementation("org.openpnp:opencv:4.5.5-1")
+    implementation(files("libs/opencv-460.jar"))
+    implementation("com.github.kwhat:jnativehook:2.2.2")
 }
